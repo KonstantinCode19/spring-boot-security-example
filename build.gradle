@@ -8,7 +8,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.1.0.BUILD-SNAPSHOT'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.5.4'
     }
 }
 
@@ -18,9 +18,8 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'idea'
 apply plugin: 'application'
 
-sourceCompatibility = 1.8
-
 compileJava {
+    sourceCompatibility = 1.8
     targetCompatibility = 1.8
 }
 
@@ -32,42 +31,45 @@ mainClassName = "com.futureprocessing.spring.Application"
 
 repositories {
     mavenCentral()
-    maven { url "http://repo.spring.io/libs-release" }
-    maven { url "http://repo.spring.io/libs-snapshot" }
-    maven { url "http://maven.springframework.org/milestone" }
+    maven { url "https://repo.spring.io/libs-release" }
+    maven { url "https://repo.spring.io/libs-snapshot" }
+    maven { url "https://maven.springframework.org/milestone" }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    compile 'org.slf4j:jcl-over-slf4j:1.7.25'
-    compile 'ch.qos.logback:logback-core:1.2.3'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:jcl-over-slf4j:1.7.25'
+    implementation 'ch.qos.logback:logback-core:1.2.3'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
 
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-tomcat'
-    compile 'org.springframework.boot:spring-boot-starter-security'
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
+    //implementation 'org.springframework.boot:spring-boot-starter-tomcat:2.5.4'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.5.4'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.5.4'
+    implementation 'org.springframework.boot:spring-boot-starter-aop:2.5.4'
 
-    compile 'com.google.guava:guava:17.0'
-    compile 'joda-time:joda-time:2.4'
-    compile('net.sf.ehcache:ehcache-core:2.6.9') {
+    implementation 'joda-time:joda-time:2.4'
+    implementation('net.sf.ehcache:ehcache-core:2.6.9') {
         exclude group: 'commons-logging'
     }
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core:1.7.0'
-    testCompile 'org.mockito:mockito-core:2.15.0'
-    testCompile 'com.jayway.restassured:rest-assured:2.3.4'
+    testImplementation('org.springframework.boot:spring-boot-starter-test:2.5.4') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+
+    testImplementation 'org.assertj:assertj-core:3.20.2'
+    testImplementation 'com.jayway.restassured:rest-assured:2.9.0'
 }
 
 jar {
-    baseName = 'springsecuritytest'
+    archivesBaseName= 'springsecuritytest'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
+test {
+    useJUnitPlatform()
 }

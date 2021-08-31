@@ -6,37 +6,33 @@ import com.futureprocessing.spring.api.samplestuff.ServiceGateway;
 import com.futureprocessing.spring.infrastructure.AuthenticatedExternalWebService;
 import com.futureprocessing.spring.infrastructure.security.ExternalServiceAuthenticator;
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.config.SSLConfig;
 import com.jayway.restassured.response.ValidatableResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.util.Objects;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        classes = {Application.class, SecurityTest.SecurityTestConfig.class}
+        classes = {Application.class}
 )
+@Profile("test")
 public class SecurityTest {
 
     private static final String X_AUTH_USERNAME = "X-Auth-Username";
@@ -52,32 +48,22 @@ public class SecurityTest {
     @Value("${keystore.pass}")
     String keystorePass;
 
-    @Autowired
+    @MockBean
     ExternalServiceAuthenticator mockedExternalServiceAuthenticator;
 
-    @Autowired
+    @MockBean
     ServiceGateway mockedServiceGateway;
 
-    @Configuration
-    public static class SecurityTestConfig {
-        @Bean
-        public ExternalServiceAuthenticator someExternalServiceAuthenticator() {
-            return mock(ExternalServiceAuthenticator.class);
-        }
-
-        @Bean
-        @Primary
-        public ServiceGateway serviceGateway() {
-            return mock(ServiceGateway.class);
-        }
-    }
-
-    @Before
+    @BeforeEach
     public void setup() {
         RestAssured.baseURI = "https://localhost";
-        RestAssured.keystore(keystoreFile, keystorePass);
         RestAssured.port = port;
         Mockito.reset(mockedExternalServiceAuthenticator, mockedServiceGateway);
+
+        RestAssured.config = RestAssured.config().sslConfig(SSLConfig.sslConfig()
+            .trustStore(Objects.requireNonNull(
+                this.getClass().getResource(keystoreFile)).getFile(), keystorePass).trustStoreType("JKS"));
+
     }
 
     @Test

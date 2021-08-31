@@ -1,6 +1,5 @@
 package com.futureprocessing.spring.infrastructure.security;
 
-import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,6 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.AuthorityUtils;
+
+import java.util.Optional;
 
 public class BackendAdminUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 

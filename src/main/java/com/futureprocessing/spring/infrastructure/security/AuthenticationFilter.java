@@ -2,8 +2,7 @@ package com.futureprocessing.spring.infrastructure.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futureprocessing.spring.api.ApiController;
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -14,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
-import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
@@ -28,6 +25,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 public class AuthenticationFilter extends GenericFilterBean {
 
@@ -45,9 +43,9 @@ public class AuthenticationFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = asHttp(request);
         HttpServletResponse httpResponse = asHttp(response);
 
-        Optional<String> username = Optional.fromNullable(httpRequest.getHeader("X-Auth-Username"));
-        Optional<String> password = Optional.fromNullable(httpRequest.getHeader("X-Auth-Password"));
-        Optional<String> token = Optional.fromNullable(httpRequest.getHeader("X-Auth-Token"));
+        Optional<String> username = Optional.ofNullable(httpRequest.getHeader("X-Auth-Username"));
+        Optional<String> password = Optional.ofNullable(httpRequest.getHeader("X-Auth-Password"));
+        Optional<String> token = Optional.ofNullable(httpRequest.getHeader("X-Auth-Token"));
 
         String resourcePath = new UrlPathHelper().getPathWithinApplication(httpRequest);
 
@@ -82,7 +80,7 @@ public class AuthenticationFilter extends GenericFilterBean {
     private void addSessionContextToLogging() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String tokenValue = "EMPTY";
-        if (authentication != null && !Strings.isNullOrEmpty(authentication.getDetails().toString())) {
+        if (authentication != null && !Strings.isEmpty(authentication.getDetails().toString())) {
 
             PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
             tokenValue = encoder.encode(authentication.getDetails().toString());
@@ -90,7 +88,7 @@ public class AuthenticationFilter extends GenericFilterBean {
         MDC.put(TOKEN_SESSION_KEY, tokenValue);
 
         String userValue = "EMPTY";
-        if (authentication != null && !Strings.isNullOrEmpty(authentication.getPrincipal().toString())) {
+        if (authentication != null && !Strings.isEmpty(authentication.getPrincipal().toString())) {
             userValue = authentication.getPrincipal().toString();
         }
         MDC.put(USER_SESSION_KEY, userValue);

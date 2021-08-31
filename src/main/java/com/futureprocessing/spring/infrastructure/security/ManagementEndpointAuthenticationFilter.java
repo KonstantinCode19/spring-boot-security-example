@@ -1,7 +1,6 @@
 package com.futureprocessing.spring.infrastructure.security;
 
 import com.futureprocessing.spring.api.ApiController;
-import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class ManagementEndpointAuthenticationFilter extends GenericFilterBean {
@@ -49,8 +49,8 @@ public class ManagementEndpointAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = asHttp(request);
         HttpServletResponse httpResponse = asHttp(response);
 
-        Optional<String> username = Optional.fromNullable(httpRequest.getHeader("X-Auth-Username"));
-        Optional<String> password = Optional.fromNullable(httpRequest.getHeader("X-Auth-Password"));
+        Optional<String> username = Optional.ofNullable(httpRequest.getHeader("X-Auth-Username"));
+        Optional<String> password = Optional.ofNullable(httpRequest.getHeader("X-Auth-Password"));
 
         String resourcePath = new UrlPathHelper().getPathWithinApplication(httpRequest);
 

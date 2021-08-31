@@ -4,11 +4,13 @@ import com.futureprocessing.spring.api.samplestuff.ServiceGateway;
 import com.futureprocessing.spring.domain.DomainUser;
 import com.futureprocessing.spring.domain.Stuff;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@Profile("!test")
 public class ServiceGatewayImpl extends ServiceGatewayBase implements ServiceGateway {
 
     @Autowired
